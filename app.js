@@ -1,0 +1,36 @@
+const brideTables = {
+  5: [],
+  19:[['Dato Pang',2],['楊俊華闔家',3],['Chemy Bin Mangala @ MArthen',1],['Afendey Bin Boy',1],['Mohd Fareez Bin Mihd Said',1],['Reynold Japli@Jeff',1],['Muhammad Isham Bin Beta',1]],
+  21:[['梁慧娟',2],['大伯娘',1],['梁蕙音',3],['梁慧貞',2],['梁健雄合家',2]],
+  22:[['劉國寧夫婦',2],['陳偉雄夫婦',2],['黃天才夫婦',2],['沈偉雄夫婦',2],['邱玉麟夫婦',2]],
+  23:[['梁仕文夫婦',2],['黃小糧夫婦',2],['鄧家文夫婦',2],['陳桂銘夫婦',2],['黃玉雄夫婦',2]],
+  24:[['馮文興夫婦',2],['盧書凡夫婦',2],['沈音龍夫婦',2],['沈得銘夫婦',2],['張君鴻夫婦',2]],
+  25:[['劉倫安夫婦',2],['劉倫發先生',1],['劉倫新先生',1],['鍾利明夫婦',2],['梁健榮',2,'（1 baby）'],['方思悌夫婦',2]],
+  26:[['Alice 姨婆',2],['張蓮鳳',1],['何文聲',2],['張玉堂',2],['劉漢強',1],['田漢松',2]],
+  27:[['彭志偉夫婦',2],['彭偉賢先生',1],['彭志新夫婦',2],['張健傑夫婦',2],['彭秀靈夫婦',2],['陳玉蓮',1]],
+  28:[['彭秀文夫婦',2],['彭梓誠',4],['唐瑞忠夫婦',2],['唐玉虎夫婦',2]],
+  29:[['同事',10]],
+  30:[['蘇福成',2],['彭秋維合家',3],['王盛標合家',2],['張偉梅女士',1]],
+  31:[['鍾貴華合家',3],['沈貴平',2],['楊善翊',2],['沈貴雲（鄭宇婆婆）',1],['彭玉祥',2]],
+  32:[['陳玉棠',1],['陳玉輝',2],['張美麗',1],['陳雪莉',1],['張瑄統爸媽',3],['姨姨姨丈',2]],
+  33:[['鍾春和合家',3],['吳煥好',2],['易玉娟',1],['王運娥',1],['陳傳權',2],['Mrs Chin',1]],
+  34:[['李慶仁合家',3],['張文威夫婦',2],['李燕珍女士',1],['梁有福夫婦',2],['李志輝夫婦',2]],
+  35:[['邱昱荌合家',3],['何輔華',3],['鄧惠貞女士',1],['佘寶珠女士',1],['張偉梅女士',1],['劉運芬女士',1],['鍾梅妹女士',1]],
+  36:[['呂連志',2],['呂偉傑',2],['呂慧盈',1],['陳嘉怡',2]],
+  37:[['吳江夫婦',2],['俞希明夫婦',2],['江平安夫婦',2],['歐錦祥',2],['黃希文',1],['陸育生',1]],
+  38:[['鐘雅輝',4],['雅涵+俊浩',2],['曹立德',1],['陳木合',1]],
+  39:[['林茂秀',3],['林國良',3],['譚春成',4]]
+};
+const groomTables={3:[['黃曉嫻爸媽',2]],15:[['許桂瑄',1],['李艷均',1],['Ellysia lok',2]],18:[['戴偉雄夫婦',2],['唐玉彬夫婦',2]]};
+const positions={1:[10.3,28],2:[10.3,38.5],3:[10.3,49],4:[10.3,59.5],5:[10.3,70.5],6:[18.3,25.5],7:[18.3,35.5],8:[18.3,46.5],9:[18.3,57.5],10:[18.3,67.7],11:[18.3,78],12:[27.3,28],13:[27.3,38.5],14:[27.3,49],15:[27.3,59.5],16:[27.3,70.5],17:[37,33.5],18:[37,43.5],19:[37,54.5],20:[37,65.5],21:[63.5,35],22:[63.5,45.5],23:[63.5,56],24:[63.5,67],25:[71,28],26:[71,38.5],27:[71,49],28:[72,60.5],29:[72.8,71.4],30:[79.4,30],31:[80,41],32:[80,51.5],33:[81.4,63.5],34:[81.4,74.9],35:[89.8,27.7],36:[89,38.5],37:[89,49],38:[90,59.8],39:[90.5,70.6]};
+const pins=document.querySelector('#tablePins'), floor=document.querySelector('#floorPlan'), panel=document.querySelector('#selectedPanel'), selectedContent=document.querySelector('#selectedContent'), input=document.querySelector('#searchInput'), clear=document.querySelector('#clearSearch');
+let selected=null;
+Object.entries(positions).forEach(([number,[x,y]])=>{const b=document.createElement('button');b.className='table-pin';b.dataset.table=number;b.style.left=x+'%';b.style.top=y+'%';b.setAttribute('aria-label','选择 '+number+' 号桌');b.addEventListener('click',e=>{e.stopPropagation();selectTable(+number)});pins.append(b)});
+function records(side){return Object.entries(side).map(([table,guests])=>({table:+table,guests,side}));}
+function total(guests){return guests.reduce((n,g)=>n+(+g[1]||0),0)}
+function card(record){const el=document.createElement('article');el.className='guest-card'+(selected===record.table?' selected':'');el.tabIndex=0;el.innerHTML=`<div class="card-title"><span>${record.table} 号桌</span><span class="seat-total">${total(record.guests)} 位</span></div>${record.guests.length?`<ul class="guest-list">${record.guests.map(g=>`<li>${g[0]} <em>${g[1]}位${g[2]||''}</em></li>`).join('')}</ul>`:'<p class="guest-list">预留座位</p>'}`;el.addEventListener('click',e=>{e.stopPropagation();selectTable(record.table)});el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectTable(record.table)}});return el}
+function matches(record,q){if(!q)return true;const hay=[String(record.table),...record.guests.flat()].join(' ').toLowerCase();return hay.includes(q)}
+function render(){const q=input.value.trim().toLowerCase();clear.hidden=!q;const groups=[[brideTables,document.querySelector('#brideGrid'),'女方'],[groomTables,document.querySelector('#groomGrid'),'男方']];let count=0;groups.forEach(([data,node,label])=>{node.textContent='';const found=records(data).filter(r=>matches(r,q));count+=found.length;if(found.length)found.forEach(r=>node.append(card(r)));else node.innerHTML=`<p class="empty">没有找到${label}宾客资料</p>`});document.querySelectorAll('.table-pin').forEach(pin=>pin.classList.toggle('selected',+pin.dataset.table===selected));document.querySelector('#resultNote').textContent=q?`找到 ${count} 桌符合「${input.value.trim()}」的资料`:'显示全部宾客座位'}
+function selectTable(n){selected=n;const rows=[['女方',brideTables[n]],['男方',groomTables[n]]].filter(([,g])=>g);selectedContent.innerHTML=`<h2 class="selected-title">${n} 号桌来宾</h2>${rows.length?rows.map(([name,guests])=>`<div class="selected-group ${name==='女方'?'bride':'groom'}"><b>${name}宾客 · ${total(guests)} 位</b>${guests.length?`<ul class="selected-list">${guests.map(g=>`<li>${g[0]}（${g[1]}位${g[2]||''}）</li>`).join('')}</ul>`:'<p>预留座位</p>'}</div>`).join(''):'<p>这桌尚未列入宾客资料。</p>'}`;panel.hidden=false;render();document.querySelector(`[data-table="${n}"]`)?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'})}
+function clearSelection(){if(selected===null)return;selected=null;panel.hidden=true;render()}
+input.addEventListener('input',render);clear.addEventListener('click',()=>{input.value='';input.focus();render()});document.querySelector('.close-panel').addEventListener('click',clearSelection);floor.addEventListener('click',e=>{if(e.target===floor||e.target.tagName==='IMG')clearSelection()});document.addEventListener('click',e=>{if(selected!==null&&!e.target.closest('.guest-card, .table-pin, .selected-panel'))clearSelection()});render();
