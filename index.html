@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>婚宴座位表</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header>
+      <p class="eyebrow">Wedding seating plan</p>
+      <h1>婚宴座位表</h1>
+      <p class="hint">点选座位或宾客表，快速找到宾客的位置</p>
+    </header>
+
+    <section class="floor-section" aria-label="婚宴平面图">
+      <div class="floor-plan" id="floorPlan">
+        <img src="assets/seating-plan.png" alt="婚宴场地座位图" />
+        <div id="tablePins" aria-label="可选餐桌"></div>
+      </div>
+      <aside class="selected-panel" id="selectedPanel" aria-live="polite" hidden>
+        <button class="close-panel" type="button" aria-label="关闭来宾表">×</button>
+        <div id="selectedContent"></div>
+      </aside>
+    </section>
+
+    <section class="directory" aria-label="宾客查找">
+      <label class="search-wrap">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="搜索姓、名或桌号" aria-label="搜索姓、名或桌号" />
+        <button id="clearSearch" type="button" aria-label="清除搜索" hidden>×</button>
+      </label>
+      <p class="result-note" id="resultNote">显示全部宾客座位</p>
+      <div class="guest-areas">
+        <section class="guest-area bride-area">
+          <div class="area-heading"><span>女方宾客</span><small>Bride's side</small></div>
+          <div class="table-grid" id="brideGrid"></div>
+        </section>
+        <section class="guest-area groom-area">
+          <div class="area-heading"><span>男方宾客</span><small>Groom's side</small></div>
+          <div class="table-grid" id="groomGrid"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
