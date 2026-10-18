@@ -176,6 +176,8 @@ const groomTables = {
     ["Anna", 1],
     ["黃曉嫻爸媽", 2]
   ],
+  "4": [],
+  "5": [],
   "6": [
     ["Chin Chiang Vui 夫妇", 2],
     ["Alex Voo 合家", 5],
@@ -208,6 +210,7 @@ const groomTables = {
   "10": [
     ["Economic Pasar", 9]
   ],
+  "11": [],
   "12": [
     ["李祥夫婦", 2],
     ["陳建華夫婦", 2],
@@ -261,6 +264,7 @@ const groomTables = {
     ["戴偉雄夫婦", 2],
     ["唐玉彬夫婦", 2]
   ],
+  "19": [],
   "20": [
     ["Zarul", 3],
     ["Goh", 1],
@@ -272,11 +276,11 @@ const groomTables = {
   ]
 };
 
-// 宾客名单以繁体储存；把常见简体输入统一为繁体后再搜寻，两个写法都能找到同一人
+// 补齐所有名单中出现过及常见繁简汉字映射
 const simplifiedToTraditional = {
   刘:'劉', 伦:'倫', 发:'發', 钟:'鍾', 锺:'鍾', 鐘:'鍾', 伟:'偉', 贤:'賢',
   荣:'榮', 国:'國', 宁:'寧', 陈:'陳', 黄:'黃', 邓:'鄧', 粮:'糧', 铭:'銘',
-  冯:'馮', 兴:'興', 卢:'盧',书:'書', 龙:'龍', 张:'張', 鸿:'鴻', 贵:'貴',
+  冯:'馮', 兴:'興', 卢:'盧', 书:'書', 龙:'龍', 张:'張', 鸿:'鴻', 贵:'貴',
   凤:'鳳', 莲:'蓮', 云:'雲', 郑:'鄭', 妈:'媽', 妇:'婦', 亲:'親', 丽:'麗',
   辉:'輝', 运:'運', 远:'遠', 贝:'貝', 晓:'曉', 艳:'艷', 许:'許', 庆:'慶',
   谭:'譚', 连:'連', 吕:'呂', 杰:'傑', 燕:'燕', 灵:'靈', 强:'強', 华:'華',
@@ -286,7 +290,8 @@ const simplifiedToTraditional = {
   权:'權', 统:'統', 维:'維', 声:'聲', 聪:'聰', 义:'義', 耀:'耀', 锦:'錦',
   诚:'誠', 辅:'輔', 传:'傳', 乐:'樂', 岚:'嵐', 苏:'蘇', 马:'馬', 庄:'莊',
   宾:'賓', 胜:'勝', 阔:'闊', 阖:'闔', 闺:'閨', 宽:'寬', 爱:'愛', 双:'雙',
-  欢:'歡', 迎:'迎', 钱:'錢', 银:'銀', 铁:'鐵', 锡:'錫', 镇:'鎮', 锐:'銳'
+  欢:'歡', 迎:'迎', 钱:'錢', 银:'銀', 铁:'鐵', 锡:'錫', 镇:'鎮', 锐:'銳',
+  贞:'貞', 娴:'嫻', 欧:'歐', 礼:'禮', 禄:'祿', 寿:'壽', 喜:'喜'
 };
 
 function normalizeSearch(value) {
@@ -370,15 +375,20 @@ function card(record) {
   return el;
 }
 
-function matches(record, q) {
-  if (!q) return true;
-  const hay = normalizeSearch([String(record.table), ...record.guests.flat()].join(' '));
-  return hay.includes(q);
+// 支持原词与繁简转换词双重匹配，即使有异体字或特殊符号也能精准找到
+function matches(record, rawQ) {
+  if (!rawQ) return true;
+  const rawHay = [String(record.table), ...record.guests.flat()].join(' ').toLowerCase();
+  const normHay = normalizeSearch(rawHay);
+  const normQ = normalizeSearch(rawQ);
+  const cleanRawQ = rawQ.toLowerCase();
+
+  return rawHay.includes(cleanRawQ) || normHay.includes(normQ) || normHay.includes(cleanRawQ);
 }
 
 function render() {
-  const q = normalizeSearch(input.value.trim());
-  clear.hidden = !q;
+  const rawQ = input.value.trim();
+  clear.hidden = !rawQ;
   const groups = [
     [brideTables, document.querySelector('#brideGrid'), '女方'],
     [groomTables, document.querySelector('#groomGrid'), '男方']
@@ -386,7 +396,7 @@ function render() {
   let count = 0;
   groups.forEach(([data, node, label]) => {
     node.textContent = '';
-    const found = records(data).filter(r => matches(r, q));
+    const found = records(data).filter(r => matches(r, rawQ));
     count += found.length;
     if (found.length) {
       found.forEach(r => node.append(card(r)));
@@ -397,8 +407,8 @@ function render() {
   document.querySelectorAll('.table-pin').forEach(pin => {
     pin.classList.toggle('selected', +pin.dataset.table === selected);
   });
-  document.querySelector('#resultNote').textContent = q
-    ? `找到 ${count} 桌符合「${input.value.trim()}」的资料`
+  document.querySelector('#resultNote').textContent = rawQ
+    ? `找到 ${count} 桌符合「${rawQ}」的资料`
     : '显示全部宾客座位';
 }
 
